@@ -46,3 +46,18 @@ process.on('SIGTERM', () => {
     .then(() => diag.debug('OpenTelemetry SDK terminated'))
     .catch(error => diag.error('Error terminating OpenTelemetry SDK', error));
 });
+
+// Changing to the below commented code fixes the problem
+/**
+async function handleExit(): Promise<void> {
+  try {
+    await sdk.shutdown();
+  } catch (error) {
+    diag.error('Error terminating OpenTelemetry SDK', error);
+  }
+  diag.debug('OpenTelemetry SDK terminated');
+}
+
+process.on('SIGTERM', handleExit);
+process.on('beforeExit', handleExit);
+*/

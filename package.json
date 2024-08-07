@@ -81,6 +81,7 @@
     "plugins/web/*",
     "propagators/*",
     "detectors/node/*",
-    "metapackages/*"
+    "metapackages/*",
+    "flush-repro"
   ]
 }

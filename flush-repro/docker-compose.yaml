@@ -1,0 +1,26 @@
+services:
+  otelcol:
+    image: otel/opentelemetry-collector:0.106.1
+    user: ${USERID}
+    volumes:
+      - ./config.yaml:/etc/otelcol/config.yaml:ro
+
+  nodescript:
+    build:
+      context: ../
+      dockerfile_inline: |
+        FROM node:22
+        WORKDIR /src
+        COPY package.json package-lock.json .
+        RUN npm install --no-workspaces
+        COPY . .
+        RUN npm install
+        RUN npm run compile
+        WORKDIR /src/flush-repro
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+      # - OTEL_TRACES_EXPORTER=console
+    command:
+      - node
+      - --require=@opentelemetry/auto-instrumentations-node/register
+      - main.js
